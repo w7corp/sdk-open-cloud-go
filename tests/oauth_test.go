@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-func TestSign(t *testing.T) {
-	client := w7.NewClient("wa84a4166e8e1f471a", "4qj8BJtSS0F9qM2dCHog/NT9BRzxJtOJ3p7Mdy5aWCc=")
+func TestOauth(t *testing.T) {
+	client := w7.NewClient("", "")
 	loginUrl, err := client.OauthService.GetLoginUrl("http://s.w7.cc")
 
 	if err != nil {
