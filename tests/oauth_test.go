@@ -8,7 +8,7 @@ import (
 )
 
 func TestOauth(t *testing.T) {
-	client := w7.NewClient("", "")
+	client := w7.NewClient(APP_ID, APP_SECRET)
 	loginUrl, err := client.OauthService.GetLoginUrl("http://s.w7.cc")
 
 	if err != nil {
