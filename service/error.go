@@ -1,26 +1,38 @@
 package service
 
-type errApiResult struct {
-	Error string `json:"error"`
-	Errno int    `json:"errno"`
+import "errors"
+
+func newErrApiResult(err error) *errApiResult {
+	if err != nil {
+		return &errApiResult{
+			ErrMsg: err.Error(),
+			Errno:  500,
+		}
+	} else {
+		return &errApiResult{
+			ErrMsg: "",
+			Errno:  0,
+		}
+	}
 }
 
-func (self errApiResult) ToError() *ErrApiResponse {
-	return &ErrApiResponse{
-		Message: self.Error,
-		Errno:   self.Errno,
+type errApiResult struct {
+	ErrMsg string `json:"error"`
+	Errno  int    `json:"errno"`
+}
+
+func (self errApiResult) ToError() error {
+	if self.IsError() {
+		return errors.New(self.ErrMsg)
+	} else {
+		return nil
 	}
 }
 
 func (self errApiResult) IsError() bool {
-	return self.Error != "" || self.Errno > 0
+	return self.ErrMsg != "" || self.Errno > 0
 }
 
-type ErrApiResponse struct {
-	Message string
-	Errno   int
-}
-
-func (self ErrApiResponse) Error() string {
-	return self.Message
+func (self errApiResult) Error() string {
+	return self.ErrMsg
 }

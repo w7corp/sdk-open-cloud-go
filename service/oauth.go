@@ -17,7 +17,7 @@ type resultUserinfo struct {
 	FounderOpenid  string `json:"founder_openid"`
 }
 
-func (self *OauthService) GetLoginUrl(redirectUrl string) (string, *ErrApiResponse) {
+func (self *OauthService) GetLoginUrl(redirectUrl string) (string, *errApiResult) {
 	type result struct {
 		Url string `json:"url"`
 	}
@@ -35,19 +35,16 @@ func (self *OauthService) GetLoginUrl(redirectUrl string) (string, *ErrApiRespon
 		Post("/we7/open/oauth/login-url/index")
 
 	if err != nil {
-		return "", &ErrApiResponse{
-			Message: err.Error(),
-			Errno:   500,
-		}
+		return "", newErrApiResult(err)
 	}
 	if errResult.IsError() {
-		return "", errResult.ToError()
+		return "", errResult
 	}
 
-	return apiResult.Url, nil
+	return apiResult.Url, newErrApiResult(nil)
 }
 
-func (self *OauthService) GetAccessTokenByCode(code string) (*resultAccessToken, *ErrApiResponse) {
+func (self *OauthService) GetAccessTokenByCode(code string) (*resultAccessToken, *errApiResult) {
 	apiResult := &resultAccessToken{}
 	errResult := &errApiResult{}
 
@@ -61,19 +58,16 @@ func (self *OauthService) GetAccessTokenByCode(code string) (*resultAccessToken,
 		Post("/we7/open/oauth/access-token/code")
 
 	if err != nil {
-		return nil, &ErrApiResponse{
-			Message: err.Error(),
-			Errno:   500,
-		}
+		return nil, newErrApiResult(err)
 	}
 	if errResult.IsError() {
-		return nil, errResult.ToError()
+		return nil, errResult
 	}
 
-	return apiResult, nil
+	return apiResult, newErrApiResult(nil)
 }
 
-func (self *OauthService) GetUserInfo(accessToken string) (*resultUserinfo, *ErrApiResponse) {
+func (self *OauthService) GetUserInfo(accessToken string) (*resultUserinfo, *errApiResult) {
 	apiResult := &resultUserinfo{}
 	errResult := &errApiResult{}
 
@@ -87,14 +81,11 @@ func (self *OauthService) GetUserInfo(accessToken string) (*resultUserinfo, *Err
 		Post("/we7/open/oauth/user/info")
 
 	if err != nil {
-		return nil, &ErrApiResponse{
-			Message: err.Error(),
-			Errno:   500,
-		}
+		return nil, newErrApiResult(err)
 	}
 	if errResult.IsError() {
-		return nil, errResult.ToError()
+		return nil, errResult
 	}
 
-	return apiResult, nil
+	return apiResult, newErrApiResult(nil)
 }

@@ -13,8 +13,8 @@ func TestOauth(t *testing.T) {
 	})
 	loginUrl, err := client.OauthService.GetLoginUrl("http://s.w7.cc")
 
-	if err != nil {
-		t.Errorf("message: %s, code: %d", err.Message, err.Errno)
+	if err.IsError() {
+		t.Errorf("message: %s, code: %d", err.ErrMsg, err.Errno)
 		return
 	}
 	test := assert.New(t)
@@ -29,12 +29,12 @@ func TestAccessToken(t *testing.T) {
 	})
 	accessToken, err := client.OauthService.GetAccessTokenByCode("123456789")
 
-	if err != nil {
-		if err.Message == "Code is already in use" {
-			t.Log(err.Message)
+	if err.IsError() {
+		if err.ErrMsg == "Code is already in use" {
+			t.Log(err.ErrMsg)
 			return
 		}
-		t.Errorf("message: %s, code: %d", err.Message, err.Errno)
+		t.Errorf("message: %s, code: %d", err.ErrMsg, err.Errno)
 		return
 	}
 	test := assert.New(t)
@@ -48,8 +48,8 @@ func TestUserInfo(t *testing.T) {
 	})
 	userInfo, err := client.OauthService.GetUserInfo(ACCESS_TOKEN)
 
-	if err != nil {
-		t.Errorf("message: %s, code: %d", err.Message, err.Errno)
+	if err.IsError() {
+		t.Errorf("message: %s, code: %d", err.ErrMsg, err.Errno)
 		return
 	}
 	test := assert.New(t)
