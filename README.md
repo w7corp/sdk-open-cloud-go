@@ -1,5 +1,10 @@
 # sdk-open-cloud-go
 
+### 安装
+
+```
+go get github.com/w7corp/sdk-open-cloud-go
+```
 
 ### 实例化sdk
 ```
