@@ -24,7 +24,9 @@ func TestOauth(t *testing.T) {
 }
 
 func TestAccessToken(t *testing.T) {
-	client := w7.NewClient(APP_ID, APP_SECRET)
+	client := w7.NewClient(APP_ID, APP_SECRET, w7.Option{
+		Debug: true,
+	})
 	accessToken, err := client.OauthService.GetAccessTokenByCode("123456789")
 
 	if err != nil {
@@ -41,7 +43,9 @@ func TestAccessToken(t *testing.T) {
 }
 
 func TestUserInfo(t *testing.T) {
-	client := w7.NewClient(APP_ID, APP_SECRET)
+	client := w7.NewClient(APP_ID, APP_SECRET, w7.Option{
+		Debug: true,
+	})
 	userInfo, err := client.OauthService.GetUserInfo(ACCESS_TOKEN)
 
 	if err != nil {

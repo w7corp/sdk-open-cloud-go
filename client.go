@@ -39,6 +39,7 @@ func NewClient(appId string, appSecret string, options ...Option) *Client {
 	httpClient := resty.New()
 	httpClient.SetBaseURL(client.apiUrl)
 	httpClient.OnBeforeRequest(client.makeSign)
+	httpClient.OnAfterResponse(client.onafterResponse)
 	client.OauthService = &service.OauthService{
 		HttpClient: httpClient,
 	}
@@ -83,6 +84,11 @@ func (self *Client) makeSign(client *resty.Client, request *resty.Request) error
 		"sign": hex.EncodeToString(sign[:]),
 	})
 	self.log.Printf("签名：%s \n", hex.EncodeToString(sign[:]))
+	return nil
+}
+
+func (self *Client) onafterResponse(client *resty.Client, response *resty.Response) error {
+	self.log.Println("response data: " + string(response.Body()))
 	return nil
 }
 
