@@ -20,3 +20,33 @@ func TestOauth(t *testing.T) {
 
 	fmt.Println(loginUrl)
 }
+
+func TestAccessToken(t *testing.T) {
+	client := w7.NewClient(APP_ID, APP_SECRET)
+	accessToken, err := client.OauthService.GetAccessTokenByCode("123456789")
+
+	if err != nil {
+		if err.Message == "Code is already in use" {
+			t.Log(err.Message)
+			return
+		}
+		t.Errorf("message: %s, code: %d", err.Message, err.Errno)
+		return
+	}
+	test := assert.New(t)
+	test.NotEmpty(accessToken.AccessToken)
+	println(accessToken.AccessToken)
+}
+
+func TestUserInfo(t *testing.T) {
+	client := w7.NewClient(APP_ID, APP_SECRET)
+	userInfo, err := client.OauthService.GetUserInfo(ACCESS_TOKEN)
+
+	if err != nil {
+		t.Errorf("message: %s, code: %d", err.Message, err.Errno)
+		return
+	}
+	test := assert.New(t)
+	test.NotEmpty(userInfo.OpenId)
+	fmt.Printf("result user openid: %s \n", userInfo.OpenId)
+}
