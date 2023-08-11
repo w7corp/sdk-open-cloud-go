@@ -16,14 +16,11 @@ func (self errApiResult) IsError() bool {
 	return self.Error != "" || self.Errno > 0
 }
 
-type messageError struct {
+type ErrApiResponse struct {
 	Message string
 	Errno   int
-	error
 }
 
-func (self messageError) Error() string {
+func (self ErrApiResponse) Error() string {
 	return self.Message
 }
-
-type ErrApiResponse messageError
