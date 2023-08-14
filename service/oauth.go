@@ -1,5 +1,7 @@
 package service
 
+import "errors"
+
 type OauthService service
 
 type resultAccessToken struct {
@@ -25,7 +27,7 @@ func (self *OauthService) GetLoginUrl(redirectUrl string) (string, *errApiResult
 	apiResult := &result{}
 	errResult := &errApiResult{}
 
-	_, err := self.HttpClient.R().
+	resp, err := self.HttpClient.R().
 		EnableTrace().
 		SetFormData(map[string]string{
 			"redirect": redirectUrl,
@@ -34,6 +36,9 @@ func (self *OauthService) GetLoginUrl(redirectUrl string) (string, *errApiResult
 		SetError(errResult).
 		Post("/we7/open/oauth/login-url/index")
 
+	if !resp.IsSuccess() {
+		return "", newErrApiResult(errors.New("接口地址错误"))
+	}
 	if err != nil {
 		return "", newErrApiResult(err)
 	}
@@ -48,7 +53,7 @@ func (self *OauthService) GetAccessTokenByCode(code string) (*resultAccessToken,
 	apiResult := &resultAccessToken{}
 	errResult := &errApiResult{}
 
-	_, err := self.HttpClient.R().
+	resp, err := self.HttpClient.R().
 		EnableTrace().
 		SetFormData(map[string]string{
 			"code": code,
@@ -57,6 +62,9 @@ func (self *OauthService) GetAccessTokenByCode(code string) (*resultAccessToken,
 		SetError(errResult).
 		Post("/we7/open/oauth/access-token/code")
 
+	if !resp.IsSuccess() {
+		return nil, newErrApiResult(errors.New("接口地址错误"))
+	}
 	if err != nil {
 		return nil, newErrApiResult(err)
 	}
@@ -71,7 +79,7 @@ func (self *OauthService) GetUserInfo(accessToken string) (*resultUserinfo, *err
 	apiResult := &resultUserinfo{}
 	errResult := &errApiResult{}
 
-	_, err := self.HttpClient.R().
+	resp, err := self.HttpClient.R().
 		EnableTrace().
 		SetFormData(map[string]string{
 			"access_token": accessToken,
@@ -79,7 +87,9 @@ func (self *OauthService) GetUserInfo(accessToken string) (*resultUserinfo, *err
 		SetResult(apiResult).
 		SetError(errResult).
 		Post("/we7/open/oauth/user/info")
-
+	if !resp.IsSuccess() {
+		return nil, newErrApiResult(errors.New("接口地址错误"))
+	}
 	if err != nil {
 		return nil, newErrApiResult(err)
 	}
