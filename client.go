@@ -40,6 +40,8 @@ func NewClient(appId string, appSecret string, options ...Option) *Client {
 	httpClient.SetBaseURL(client.apiUrl)
 	httpClient.OnBeforeRequest(client.makeSign)
 	httpClient.OnAfterResponse(client.onafterResponse)
+	client.httpClient = httpClient
+
 	client.OauthService = &service.OauthService{
 		HttpClient: httpClient,
 	}
@@ -48,18 +50,24 @@ func NewClient(appId string, appSecret string, options ...Option) *Client {
 }
 
 type Client struct {
-	apiUrl       string
-	appId        string
-	appSecret    string
-	log          *wlog
+	apiUrl     string
+	appId      string
+	appSecret  string
+	log        *wlog
+	httpClient *resty.Client
+
 	OauthService *service.OauthService
 }
 
-func (self *Client) makeSign(client *resty.Client, request *resty.Request) error {
+func (c *Client) GetHttpClient() *resty.Client {
+	return c.httpClient
+}
+
+func (c *Client) makeSign(client *resty.Client, request *resty.Request) error {
 	request.SetFormData(map[string]string{
-		"appid":     self.appId,
+		"appid":     c.appId,
 		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
-		"nonce":     self.getRandomString(5),
+		"nonce":     c.getRandomString(5),
 	})
 	var keys []string
 	var signStr string
@@ -76,23 +84,23 @@ func (self *Client) makeSign(client *resty.Client, request *resty.Request) error
 			signStr += "&"
 		}
 	}
-	signStr += self.appSecret
-	self.log.Printf("签名数据：%s \n", signStr)
+	signStr += c.appSecret
+	c.log.Printf("签名数据：%s \n", signStr)
 
 	sign := md5.Sum([]byte(signStr))
 	request.SetFormData(map[string]string{
 		"sign": hex.EncodeToString(sign[:]),
 	})
-	self.log.Printf("签名：%s \n", hex.EncodeToString(sign[:]))
+	c.log.Printf("签名：%s \n", hex.EncodeToString(sign[:]))
 	return nil
 }
 
-func (self *Client) onafterResponse(client *resty.Client, response *resty.Response) error {
-	self.log.Println("response data: " + string(response.Body()))
+func (c *Client) onafterResponse(client *resty.Client, response *resty.Response) error {
+	c.log.Println("response data: " + string(response.Body()))
 	return nil
 }
 
-func (self *Client) getRandomString(n int) string {
+func (c *Client) getRandomString(n int) string {
 	str := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789"
 	bytes := []byte(str)
 	var result []byte
