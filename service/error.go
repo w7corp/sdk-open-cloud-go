@@ -2,7 +2,7 @@ package service
 
 import "errors"
 
-func newErrApiResult(err error) *ErrApiResult {
+func NewErrApiResult(err error) *ErrApiResult {
 	if err != nil {
 		return &ErrApiResult{
 			ErrMsg: err.Error(),

@@ -37,16 +37,16 @@ func (self *OauthService) GetLoginUrl(redirectUrl string) (string, *ErrApiResult
 		Post("/we7/open/oauth/login-url/index")
 
 	if !resp.IsSuccess() {
-		return "", newErrApiResult(errors.New("接口地址错误"))
+		return "", NewErrApiResult(errors.New("接口地址错误"))
 	}
 	if err != nil {
-		return "", newErrApiResult(err)
+		return "", NewErrApiResult(err)
 	}
 	if errResult.IsError() {
 		return "", errResult
 	}
 
-	return apiResult.Url, newErrApiResult(nil)
+	return apiResult.Url, NewErrApiResult(nil)
 }
 
 func (self *OauthService) GetAccessTokenByCode(code string) (*ResultAccessToken, *ErrApiResult) {
@@ -63,16 +63,16 @@ func (self *OauthService) GetAccessTokenByCode(code string) (*ResultAccessToken,
 		Post("/we7/open/oauth/access-token/code")
 
 	if !resp.IsSuccess() {
-		return nil, newErrApiResult(errors.New("接口地址错误"))
+		return nil, NewErrApiResult(errors.New("接口地址错误"))
 	}
 	if err != nil {
-		return nil, newErrApiResult(err)
+		return nil, NewErrApiResult(err)
 	}
 	if errResult.IsError() {
 		return nil, errResult
 	}
 
-	return apiResult, newErrApiResult(nil)
+	return apiResult, NewErrApiResult(nil)
 }
 
 func (self *OauthService) GetUserInfo(accessToken string) (*ResultUserinfo, *ErrApiResult) {
@@ -88,14 +88,14 @@ func (self *OauthService) GetUserInfo(accessToken string) (*ResultUserinfo, *Err
 		SetError(errResult).
 		Post("/we7/open/oauth/user/info")
 	if !resp.IsSuccess() {
-		return nil, newErrApiResult(errors.New("接口地址错误"))
+		return nil, NewErrApiResult(errors.New("接口地址错误"))
 	}
 	if err != nil {
-		return nil, newErrApiResult(err)
+		return nil, NewErrApiResult(err)
 	}
 	if errResult.IsError() {
 		return nil, errResult
 	}
 
-	return apiResult, newErrApiResult(nil)
+	return apiResult, NewErrApiResult(nil)
 }
