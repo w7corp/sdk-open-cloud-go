@@ -7,6 +7,9 @@ import (
 	"testing"
 )
 
+var APP_ID = ""
+var APP_SECRET = ""
+
 func TestOauth(t *testing.T) {
 	client := w7.NewClient(APP_ID, APP_SECRET, w7.Option{
 		Debug: true,

@@ -2,26 +2,26 @@ package service
 
 import "errors"
 
-func newErrApiResult(err error) *errApiResult {
+func newErrApiResult(err error) *ErrApiResult {
 	if err != nil {
-		return &errApiResult{
+		return &ErrApiResult{
 			ErrMsg: err.Error(),
 			Errno:  500,
 		}
 	} else {
-		return &errApiResult{
+		return &ErrApiResult{
 			ErrMsg: "",
 			Errno:  0,
 		}
 	}
 }
 
-type errApiResult struct {
+type ErrApiResult struct {
 	ErrMsg string `json:"error"`
 	Errno  int    `json:"errno"`
 }
 
-func (self errApiResult) ToError() error {
+func (self ErrApiResult) ToError() error {
 	if self.IsError() {
 		return errors.New(self.ErrMsg)
 	} else {
@@ -29,10 +29,10 @@ func (self errApiResult) ToError() error {
 	}
 }
 
-func (self errApiResult) IsError() bool {
+func (self ErrApiResult) IsError() bool {
 	return self.ErrMsg != "" || self.Errno > 0
 }
 
-func (self errApiResult) Error() string {
+func (self ErrApiResult) Error() string {
 	return self.ErrMsg
 }

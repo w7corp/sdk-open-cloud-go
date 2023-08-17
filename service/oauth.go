@@ -4,12 +4,12 @@ import "errors"
 
 type OauthService service
 
-type resultAccessToken struct {
+type ResultAccessToken struct {
 	AccessToken string `json:"access_token"`
 	ExpireTime  int    `json:"expire_time"`
 }
 
-type resultUserinfo struct {
+type ResultUserinfo struct {
 	UserId         int    `json:"user_id"`
 	OpenId         string `json:"open_id"`
 	Nickname       string `json:"nickname"`
@@ -19,13 +19,13 @@ type resultUserinfo struct {
 	FounderOpenid  string `json:"founder_openid"`
 }
 
-func (self *OauthService) GetLoginUrl(redirectUrl string) (string, *errApiResult) {
+func (self *OauthService) GetLoginUrl(redirectUrl string) (string, *ErrApiResult) {
 	type result struct {
 		Url string `json:"url"`
 	}
 
 	apiResult := &result{}
-	errResult := &errApiResult{}
+	errResult := &ErrApiResult{}
 
 	resp, err := self.HttpClient.R().
 		EnableTrace().
@@ -49,9 +49,9 @@ func (self *OauthService) GetLoginUrl(redirectUrl string) (string, *errApiResult
 	return apiResult.Url, newErrApiResult(nil)
 }
 
-func (self *OauthService) GetAccessTokenByCode(code string) (*resultAccessToken, *errApiResult) {
-	apiResult := &resultAccessToken{}
-	errResult := &errApiResult{}
+func (self *OauthService) GetAccessTokenByCode(code string) (*ResultAccessToken, *ErrApiResult) {
+	apiResult := &ResultAccessToken{}
+	errResult := &ErrApiResult{}
 
 	resp, err := self.HttpClient.R().
 		EnableTrace().
@@ -75,9 +75,9 @@ func (self *OauthService) GetAccessTokenByCode(code string) (*resultAccessToken,
 	return apiResult, newErrApiResult(nil)
 }
 
-func (self *OauthService) GetUserInfo(accessToken string) (*resultUserinfo, *errApiResult) {
-	apiResult := &resultUserinfo{}
-	errResult := &errApiResult{}
+func (self *OauthService) GetUserInfo(accessToken string) (*ResultUserinfo, *ErrApiResult) {
+	apiResult := &ResultUserinfo{}
+	errResult := &ErrApiResult{}
 
 	resp, err := self.HttpClient.R().
 		EnableTrace().
