@@ -73,7 +73,7 @@ func (c *Client) makeSign(client *resty.Client, request *resty.Request) error {
 		}
 		body["appid"] = c.appId
 		body["timestamp"] = strconv.FormatInt(time.Now().Unix(), 10)
-		body["nonce"] = c.getRandomString(5)
+		body["nonce"] = c.getRandomString(16)
 
 		signByte, err := client.JSONMarshal(body)
 		if err != nil {
@@ -89,7 +89,7 @@ func (c *Client) makeSign(client *resty.Client, request *resty.Request) error {
 		request.SetFormData(map[string]string{
 			"appid":     c.appId,
 			"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
-			"nonce":     c.getRandomString(5),
+			"nonce":     c.getRandomString(16),
 		})
 		var keys []string
 		signStr := ""
