@@ -7,8 +7,13 @@ import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/w7corp/sdk-open-cloud-go/service"
+	"golang.org/x/net/publicsuffix"
 	"log"
+	"math"
 	"math/rand"
+	"net"
+	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 	"sort"
 	"strconv"
@@ -37,11 +42,28 @@ func NewClient(appId string, appSecret string, options ...Option) *Client {
 		}
 	}
 
-	httpClient := resty.New()
+	cookieJar, _ := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
+	dialer := &net.Dialer{
+		Timeout:   30 * time.Second,
+		KeepAlive: 30 * time.Second,
+	}
+	httpClient := resty.NewWithClient(&http.Client{
+		Jar: cookieJar,
+		Transport: &http.Transport{
+			Proxy:                 http.ProxyFromEnvironment,
+			DialContext:           dialer.DialContext,
+			ForceAttemptHTTP2:     true,
+			MaxIdleConns:          1000,
+			MaxIdleConnsPerHost:   math.MaxInt,
+			IdleConnTimeout:       90 * time.Second,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ExpectContinueTimeout: 1 * time.Second,
+		},
+	})
 	httpClient.SetBaseURL(client.apiUrl)
 	httpClient.OnBeforeRequest(client.makeSign)
 	httpClient.OnAfterResponse(client.onafterResponse)
-	client.httpClient = httpClient
+	client.SetHttpClient(httpClient)
 
 	client.OauthService = &service.OauthService{
 		HttpClient: httpClient,
@@ -58,6 +80,10 @@ type Client struct {
 	httpClient *resty.Client
 
 	OauthService *service.OauthService
+}
+
+func (c *Client) SetHttpClient(client *resty.Client) {
+	c.httpClient = client
 }
 
 func (c *Client) GetHttpClient() *resty.Client {
