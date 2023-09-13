@@ -48,7 +48,8 @@ func NewClient(appId string, appSecret string, options ...Option) *Client {
 		KeepAlive: 30 * time.Second,
 	}
 	httpClient := resty.NewWithClient(&http.Client{
-		Jar: cookieJar,
+		Timeout: 30 * time.Second,
+		Jar:     cookieJar,
 		Transport: &http.Transport{
 			Proxy:                 http.ProxyFromEnvironment,
 			DialContext:           dialer.DialContext,
