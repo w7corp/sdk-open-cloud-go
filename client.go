@@ -61,6 +61,7 @@ func NewClient(appId string, appSecret string, options ...Option) *Client {
 			ExpectContinueTimeout: 1 * time.Second,
 		},
 	})
+	httpClient.SetRetryCount(3)
 	httpClient.SetBaseURL(client.apiUrl)
 	httpClient.OnBeforeRequest(client.makeSign)
 	httpClient.OnAfterResponse(client.onafterResponse)
