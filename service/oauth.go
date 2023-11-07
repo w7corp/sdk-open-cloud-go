@@ -1,7 +1,5 @@
 package service
 
-import "errors"
-
 type OauthService service
 
 type ResultAccessToken struct {
@@ -27,7 +25,7 @@ func (self *OauthService) GetLoginUrl(redirectUrl string) (string, *ErrApiResult
 	apiResult := &result{}
 	errResult := &ErrApiResult{}
 
-	resp, err := self.HttpClient.R().
+	_, err := self.HttpClient.R().
 		EnableTrace().
 		SetFormData(map[string]string{
 			"redirect": redirectUrl,
@@ -39,9 +37,6 @@ func (self *OauthService) GetLoginUrl(redirectUrl string) (string, *ErrApiResult
 		return "", NewErrApiResult(err)
 	}
 
-	if !resp.IsSuccess() {
-		return "", NewErrApiResult(errors.New("接口地址错误"))
-	}
 	if errResult.IsError() {
 		return "", errResult
 	}
@@ -53,7 +48,7 @@ func (self *OauthService) GetAccessTokenByCode(code string) (*ResultAccessToken,
 	apiResult := &ResultAccessToken{}
 	errResult := &ErrApiResult{}
 
-	resp, err := self.HttpClient.R().
+	_, err := self.HttpClient.R().
 		EnableTrace().
 		SetFormData(map[string]string{
 			"code": code,
@@ -65,9 +60,6 @@ func (self *OauthService) GetAccessTokenByCode(code string) (*ResultAccessToken,
 		return nil, NewErrApiResult(err)
 	}
 
-	if !resp.IsSuccess() {
-		return nil, NewErrApiResult(errors.New("接口地址错误"))
-	}
 	if errResult.IsError() {
 		return nil, errResult
 	}
@@ -79,7 +71,7 @@ func (self *OauthService) GetUserInfo(accessToken string) (*ResultUserinfo, *Err
 	apiResult := &ResultUserinfo{}
 	errResult := &ErrApiResult{}
 
-	resp, err := self.HttpClient.R().
+	_, err := self.HttpClient.R().
 		EnableTrace().
 		SetFormData(map[string]string{
 			"access_token": accessToken,
@@ -91,9 +83,6 @@ func (self *OauthService) GetUserInfo(accessToken string) (*ResultUserinfo, *Err
 		return nil, NewErrApiResult(err)
 	}
 
-	if !resp.IsSuccess() {
-		return nil, NewErrApiResult(errors.New("接口地址错误"))
-	}
 	if errResult.IsError() {
 		return nil, errResult
 	}
